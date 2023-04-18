@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: microservice-dialog
+
+  cloud:
+    kubernetes:
+      secrets:
+        sources:
+          - namespace: skillbox-alpha
+            name: microservice-dialog
+      config:
+        sources:
+          - namespace: skillbox-alpha
+            name: microservice-dialog
+      reload:
+        enabled: true
+        strategy: refresh
+        mode: event
+
+management:
+  endpoint:
+    restart:
+      enabled: true
+    health:
+      enabled: true
+    info:
+      enabled: true
+    prometheus:
+      enabled: true
