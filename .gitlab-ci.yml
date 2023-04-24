@@ -13,10 +13,6 @@ build:
     - mvn -s maven-settings.xml clean package deploy
   variables:
     MAVEN_OPTS: "-Dmaven.repo.local=./.m2/repository"
-  cache:
-    paths:
-      - ./.m2/repository
-    key: "$CI_BUILD_REF_NAME"
   artifacts:
     paths:
       - ./impl/target
