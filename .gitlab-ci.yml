@@ -8,7 +8,7 @@ stages:
 build:
   stage: build
   only: 
-    - develop
+    - 4-create-new-dialog
   script:
     - mvn -s maven-settings.xml clean package deploy
   variables:
@@ -21,7 +21,7 @@ docker_deploy:
   image: docker:19.03.12
   stage: docker_deploy
   only: 
-    - develop
+    - 4-create-new-dialog
   variables:
     TAG: latest
   before_script:
@@ -34,7 +34,7 @@ docker_deploy:
 deploy_prod:
   stage: deploy_prod
   only:
-    - develop
+    - 4-create-new-dialog
   except:
     - tags
   before_script:

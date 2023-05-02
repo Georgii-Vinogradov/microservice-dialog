@@ -19,7 +19,7 @@ import java.util.UUID;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "dialog")
+@Table(name = "message")
 public class Message extends BaseEntity {
 
     @Column(name = "time", nullable = false)
@@ -35,8 +35,9 @@ public class Message extends BaseEntity {
     private String messageText;
 
     @Column(name = "read_status", columnDefinition = "VARCHAR(255)", nullable = false)
-    private ReadStatusDto readStatusDto;
+    private String readStatus;
 
     @ManyToOne
+    @JoinColumn(name = "dialog_id", nullable = false)
     private Dialog dialog;
 }

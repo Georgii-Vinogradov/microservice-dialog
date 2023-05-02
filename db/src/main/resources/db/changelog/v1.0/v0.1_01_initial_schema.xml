@@ -4,6 +4,57 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <changeSet id="create-table-dialog" author="Georgiy Vinogradov">
+        <createTable tableName="dialog">
+            <column name="id" type="uuid">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="is_deleted" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="unread_count" type="int"/>
+            <column name="author_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="conversation_partner" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-message" author="Georgiy Vinogradov">
+        <createTable tableName="message">
+            <column name="id" type="uuid">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="is_deleted" type="boolean">
+                <constraints nullable="false"/>
+            </column>
+            <column name="time" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="author_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="recipient_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message_text" type="text"/>
+            <column name="read_status" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dialog_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-foreign-key" author="Georgiy Vinogradov">
+        <addForeignKeyConstraint baseColumnNames="dialog_id" baseTableName="message"
+                                 constraintName="fk_message_dialog" referencedColumnNames="id"
+                                 referencedTableName="dialog"/>
+    </changeSet>
+
     <!-- TABLES -->
     <!-- END TABLES -->
 

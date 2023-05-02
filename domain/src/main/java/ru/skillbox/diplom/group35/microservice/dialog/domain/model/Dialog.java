@@ -6,7 +6,7 @@ import lombok.Setter;
 import ru.skillbox.diplom.group35.library.core.model.base.BaseEntity;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -25,13 +25,14 @@ public class Dialog extends BaseEntity {
     @Column(name = "unread_count")
     private Integer unreadCount;
 
-    @Column(name = "conversation_partner")
+    @Column(name = "author_id", nullable = false)
+    private UUID authorId;
+
+    @Column(name = "conversation_partner", nullable = false)
     private UUID conversationPartner;
 
-    @OneToOne
-    @JoinColumn(name = "last_message", referencedColumnName = "id")
-    private Message lastMessage;
-
-    @OneToMany
-    private Set<Message> messages;
+    @OrderBy("time DESC")
+    @Column(name = "last_message")
+    @OneToMany(mappedBy = "dialog", fetch = FetchType.LAZY)
+    private List<Message> lastMessage;
 }
