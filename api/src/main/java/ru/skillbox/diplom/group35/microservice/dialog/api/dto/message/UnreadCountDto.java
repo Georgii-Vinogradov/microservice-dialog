@@ -1,7 +1,7 @@
 package ru.skillbox.diplom.group35.microservice.dialog.api.dto.message;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 /**
  * UnreadCountDto
@@ -9,8 +9,8 @@ import lombok.Setter;
  * @author Georgii Vinogradov
  */
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
 public class UnreadCountDto {
     private Integer count;
 }

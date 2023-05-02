@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.skillbox.diplom.group35.library.core.annotation.EnableBaseRepository;
 import ru.skillbox.diplom.group35.library.core.annotation.EnableSecurity;
+import ru.skillbox.diplom.group35.library.core.annotation.JwtProvider;
 
 /**
  * Application
@@ -11,6 +12,7 @@ import ru.skillbox.diplom.group35.library.core.annotation.EnableSecurity;
  * @author Georgii Vinogradov
  */
 
+@JwtProvider
 @EnableSecurity
 @EnableBaseRepository
 @SpringBootApplication
