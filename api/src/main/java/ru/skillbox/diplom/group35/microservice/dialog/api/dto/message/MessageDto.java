@@ -1,5 +1,6 @@
 package ru.skillbox.diplom.group35.microservice.dialog.api.dto.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import ru.skillbox.diplom.group35.library.core.dto.base.BaseDto;
 
@@ -20,4 +21,5 @@ public class MessageDto extends BaseDto {
     private String messageText;
     private String readStatus;
     private UUID dialogId;
+    private Long kafkaTimestamp;
 }

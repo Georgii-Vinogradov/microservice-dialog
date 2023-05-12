@@ -15,7 +15,7 @@ spring:
     driverClassName: org.postgresql.Driver
 
   jpa:
-    show-sql: true
+    show-sql: false
     hibernate:
       ddl-auto: none
     properties:
@@ -25,22 +25,22 @@ spring:
         default_schema: dialog
     open-in-view: false
 
-  kafka:
-    bootstrap-servers: localhost:9092
-    consumer:
-      group-id: app.1
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    producer:
-      retries: 3
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-
-app:
+kafka:
+  bootstrap-servers: localhost:9092
+  consumer:
+    group-id: dialog.1
+    concurrency: 3
+    max.poll.interval.ms: 300000  # 5min for debug
+    spring.json.trusted.packages: ru.skillbox.diplom.group35.*
+  producer:
+    retries: 3
   topic:
-    account: topic-dialog
+    partition-count: 3
+    replication-factor: 1
+    reply: t.dialog.message.out
+    request: t.dialog.message.in
 
 logging:
   level:
     org.springframework: info
+    org.apache.kafka.clients.producer: ERROR
