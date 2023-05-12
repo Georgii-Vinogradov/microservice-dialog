@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.diplom.group35.library.core.annotation.EnableExceptionHandler;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.dialog.DialogDto;
@@ -32,16 +31,22 @@ public class DialogControllerImpl implements DialogController {
     private final DialogService dialogService;
 
     @Override
-    public ResponseEntity<DialogDto> createDialog(@RequestBody DialogDto dialogDto) {
-        log.info("create dialog");
-        UUID authorId = UUID.fromString("123e4567-e89b-12d3-a456-426614174002");
-        return ResponseEntity.ok(dialogService.createDialog(dialogDto, authorId));
+    public ResponseEntity<DialogDto> createDialog(DialogDto dialogDto) {
+        log.info("create dialog with conversationPartner1: {}, conversationPartner2: {}",
+                dialogDto.getConversationPartner1(), dialogDto.getConversationPartner2());
+        return ResponseEntity.ok(dialogService.createDialog(dialogDto));
+    }
+    @Override
+    public ResponseEntity<MessageDto> createMessage(MessageDto messageDto) {
+        log.info("create message with conversationPartner1: {}, conversationPartner2: {}",
+                messageDto.getConversationPartner1(), messageDto.getConversationPartner2());
+        return ResponseEntity.ok(dialogService.createMessage(messageDto));
     }
 
     @Override
-    public ResponseEntity<MessageDto> createMessage(@RequestBody MessageDto messageDto) {
-        log.info("create message");
-        return ResponseEntity.ok(dialogService.createMessage(messageDto));
+    public ResponseEntity<DialogDto> getDialogByRecipientId(UUID recipientId) {
+        log.info("get dialog by recipientId {}", recipientId);
+        return ResponseEntity.ok(dialogService.getDialogByRecipientId(recipientId));
     }
 
     @Override
@@ -64,9 +69,9 @@ public class DialogControllerImpl implements DialogController {
     }
 
     @Override
-    public ResponseEntity<Page<MessageShortDto>> getMessages(UUID companionId, Pageable pageable) {
-        log.info("get messages with companion id: {}", companionId);
-        return ResponseEntity.ok(dialogService.getMessages(companionId, pageable));
+    public ResponseEntity<Page<MessageShortDto>> getMessages(UUID recipientId, Pageable pageable) {
+        log.info("get messages with recipientId {}", recipientId);
+        return ResponseEntity.ok(dialogService.getMessages(recipientId, pageable));
     }
 
 }

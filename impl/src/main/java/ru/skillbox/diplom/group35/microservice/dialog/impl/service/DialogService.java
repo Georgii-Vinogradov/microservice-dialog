@@ -20,8 +20,7 @@ import ru.skillbox.diplom.group35.microservice.dialog.impl.repository.DialogRepo
 import ru.skillbox.diplom.group35.microservice.dialog.impl.repository.MessageRepository;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static ru.skillbox.diplom.group35.library.core.utils.SpecificationUtil.*;
 
@@ -39,21 +38,45 @@ public class DialogService {
 
     private final DialogMapper dialogMapper;
     private final MessageMapper messageMapper;
-    private final SecurityUtil securityUtil;
     private final DialogRepository dialogRepository;
     private final MessageRepository messageRepository;
+    private final SecurityUtil securityUtil;
 
-    public DialogDto createDialog(DialogDto dialogDto, UUID authorId) {
+    private DialogDto createDialogDto(UUID conversationPartner1, UUID conversationPartner2) {
+        DialogDto dialogDto = new DialogDto();
+        dialogDto.setIsDeleted(false);
+        dialogDto.setConversationPartner1(conversationPartner1);
+        dialogDto.setConversationPartner2(conversationPartner2);
+        return dialogDto;
+    }
+
+    private Dialog createDialogIfAbsent(DialogDto dialogDto) {
         Dialog dialog = null;
-        Optional<Dialog> dialogFound = dialogRepository
-                .findOne(getDialogSpec(new DialogSearchDto(authorId, dialogDto.getConversationPartner())));
+        DialogSearchDto searchDto = new DialogSearchDto(dialogDto.getConversationPartner1(), dialogDto.getConversationPartner2());
+        Optional<Dialog> dialogFound = dialogRepository.findOne(getDialogSpecIn(searchDto));
         if (dialogFound.isPresent()) {
             dialog =  dialogFound.get();
         } else {
-            dialog = dialogRepository.save(dialogMapper.toDialog(dialogDto, authorId));
+            dialog = dialogRepository.save(dialogMapper.toDialog(dialogDto));
         }
+        return dialog;
+    }
+
+    public DialogDto createDialog(DialogDto dialogDto) {
+        Dialog dialog = createDialogIfAbsent(dialogDto);
         Optional<Message> lastMessage = messageRepository.findTopByDialogIdOrderByTimeDesc(dialog.getId());
-        return dialogMapper.toDto(dialog, lastMessage.isPresent() ? lastMessage.get() : null);
+        log.info("return dialogId {}", dialog.getId());
+        return dialogMapper.toDto(dialog, lastMessage.isPresent() ? lastMessage.get() :null);
+    }
+
+    public DialogDto getDialogByRecipientId(UUID recipientId) {
+        UUID currentUserId = securityUtil.getAccountDetails().getId();
+        log.info("found current user id: {}", currentUserId);
+        DialogDto dialogDto = createDialogDto(currentUserId, recipientId);
+        Dialog dialog = createDialogIfAbsent(dialogDto);
+        log.info("return dialogId {}", dialog.getId());
+        Optional<Message> lastMessage = messageRepository.findTopByDialogIdOrderByTimeDesc(dialog.getId());
+        return dialogMapper.toDto(dialog, lastMessage.isPresent() ? lastMessage.get() :null);
     }
 
     public MessageDto createMessage(MessageDto messageDto) {
@@ -61,12 +84,14 @@ public class DialogService {
         Dialog dialog = null;
         if (messageDto.getDialogId() != null) {
             dialog = dialogRepository.getById(messageDto.getDialogId());
+        } else {
+            DialogDto dialogDto = createDialogDto(messageDto.getConversationPartner1(), messageDto.getConversationPartner2());
+            dialog = createDialogIfAbsent(dialogDto);
         }
-        dialog = dialog == null ? createDialog(messageDto.getAuthorId(), messageDto.getRecipientId()) : dialog;
-
         Message message = messageMapper.toMessage(messageDto);
         message.setDialog(dialog);
         message = messageRepository.save(message);
+        log.info("return messageId {}", message.getId());
         return messageMapper.toMessageDto(message);
     }
 
@@ -75,29 +100,32 @@ public class DialogService {
     }
 
     public Page<DialogDto> getDialogs(Pageable pageable) {
-        UUID authorId = securityUtil.getAccountDetails().getId();
-        log.info("found current user id: {}", authorId);
-        DialogSearchDto dialogSearchDto = new DialogSearchDto(authorId);
-        Page<Dialog> dialogs = dialogRepository.findAll(getDialogSpec(dialogSearchDto), pageable);
+        UUID currentUserId = securityUtil.getAccountDetails().getId();
+        log.info("found current user id: {}", currentUserId);
+        DialogSearchDto dialogSearchDto = new DialogSearchDto().setConversationPartner1(currentUserId);
+        DialogSearchDto reverseDialogSearchDto = new DialogSearchDto().setConversationPartner2(currentUserId);
+        Page<Dialog> dialogs = dialogRepository.findAll(getDialogSpec(dialogSearchDto)
+                .or(getDialogSpec(reverseDialogSearchDto)), pageable);
 
         Page<DialogDto> dialogDtoPage = dialogs.map(dialog -> {
             Optional<Message> lastMessage = messageRepository.findTopByDialogIdOrderByTimeDesc(dialog.getId());
             DialogDto dto = dialogMapper.toDto(dialog, lastMessage.isPresent() ? lastMessage.get() : null);
             MessageSearchDto messageSearchDto = new MessageSearchDto()
-                    .setAuthorId(authorId)
-                    .setRecipientId(dialog.getConversationPartner())
+                    .setConversationPartner1(dto.getConversationPartner1())
+                    .setConversationPartner2(dto.getConversationPartner1())
                     .setReadStatus("SENT");
             dto.setUnreadCount(getUnreadCount(messageSearchDto));
             return  dto;
         });
+        log.info("return dialog page number {} of {}", dialogDtoPage.getNumber(), dialogDtoPage.getTotalPages());
         return dialogDtoPage;
     }
 
     public UnreadCountDto getUnreadCountDto() {
-        UUID recipientId = securityUtil.getAccountDetails().getId();
-        log.info("found current user id: {}", recipientId);
+        UUID currentUserId = securityUtil.getAccountDetails().getId();
+        log.info("found current user id: {}", currentUserId);
         MessageSearchDto messageSearchDto = new MessageSearchDto()
-                .setRecipientId(recipientId)
+                .setConversationPartner2(currentUserId)
                 .setReadStatus("SENT");
         return new UnreadCountDto(getUnreadCount(messageSearchDto));
     }
@@ -107,31 +135,19 @@ public class DialogService {
     }
 
     public Page<MessageShortDto> getMessages(UUID companionId, Pageable pageable) {
-        UUID authorId = securityUtil.getAccountDetails().getId();
-        log.info("found current user id: {}", authorId);
+        UUID currentUserId = securityUtil.getAccountDetails().getId();
+        log.info("found current user id: {}", currentUserId);
         MessageSearchDto messageSearchDto = new MessageSearchDto()
-                .setAuthorId(authorId)
-                .setRecipientId(companionId);
-        Page<Message> messages = messageRepository.findAll(getMessageSpec(messageSearchDto), pageable);
-        if (messages.get().count() == 0) {
-            dialogRepository.save(createDialog(authorId, companionId));
-        }
+                .setConversationPartner1(currentUserId)
+                .setConversationPartner2(companionId);
+        MessageSearchDto reverseMessageSearchDto = new MessageSearchDto()
+                .setConversationPartner1(companionId)
+                .setConversationPartner2(currentUserId);
+        Page<Message> messages = messageRepository.findAll(getMessageSpec(messageSearchDto)
+                .or(getMessageSpec(reverseMessageSearchDto)), pageable);
         Page<MessageShortDto> messageShortDtoPage = messages.map(messageMapper::toShortMessageDto);
+        log.info("return messages page number {} of {}", messageShortDtoPage.getNumber(), messageShortDtoPage.getTotalPages());
         return messageShortDtoPage;
-    }
-
-    private Dialog createDialog(UUID authorId, UUID companionId) {
-        log.info("create dialog w authorId: {}, companionId: {}", authorId, companionId);
-        Optional<Dialog> dialogFound = dialogRepository
-                .findOne(getDialogSpec(new DialogSearchDto(authorId, companionId)));
-        if (dialogFound.isPresent()) {
-            return dialogFound.get();
-        }
-        Dialog dialog = new Dialog();
-        dialog.setAuthorId(authorId);
-        dialog.setConversationPartner(companionId);
-        dialog.setIsDeleted(false);
-        return dialogRepository.save(dialog);
     }
 
     public Long getLastTimestamp() {
@@ -140,19 +156,25 @@ public class DialogService {
 
     public static Specification<Message> getMessageSpec(MessageSearchDto messageSearchDto) {
         return getBaseSpecification(messageSearchDto)
-                .and(equal(Message_.authorId, messageSearchDto.getAuthorId(), true))
-                .and(equal(Message_.recipientId, messageSearchDto.getRecipientId(), true))
+                .and(equal(Message_.conversationPartner1, messageSearchDto.getConversationPartner1(), true))
+                .and(equal(Message_.conversationPartner2, messageSearchDto.getConversationPartner2(), true))
                 .and(equal(Message_.readStatus, messageSearchDto.getReadStatus(), true))
-                .and(equal(Message_.kafkaTimestamp, messageSearchDto.getKafkaTimestamp(), true))
                 .and(equal(Message_.isDeleted, messageSearchDto.getIsDeleted(), true));
     }
     
-    public static Specification<Dialog> getDialogSpec(DialogSearchDto dialogSearchDto) {
+    public static Specification<Dialog> getDialogSpecIn(DialogSearchDto dialogSearchDto) {
+        List<UUID> anyConversationPartner = List.of(dialogSearchDto.getConversationPartner1(), dialogSearchDto.getConversationPartner2());
         return getBaseSpecification(dialogSearchDto)
-                .and(equal(Dialog_.authorId, dialogSearchDto.getAuthorId(), true))
-                .and(equal(Dialog_.conversationPartner, dialogSearchDto.getConversationPartner(), true))
+                .and(in(Dialog_.conversationPartner1, anyConversationPartner, true))
+                .and(in(Dialog_.conversationPartner2, anyConversationPartner, true))
                 .and(equal(Dialog_.isDeleted, dialogSearchDto.getIsDeleted(), true));
     }
 
+    public static Specification<Dialog> getDialogSpec(DialogSearchDto dialogSearchDto) {
+        return getBaseSpecification(dialogSearchDto)
+                .and(equal(Dialog_.conversationPartner1, dialogSearchDto.getConversationPartner1(), true))
+                .and(equal(Dialog_.conversationPartner2, dialogSearchDto.getConversationPartner2(), true))
+                .and(equal(Dialog_.isDeleted, dialogSearchDto.getIsDeleted(), true));
+    }
 
 }

@@ -1,5 +1,6 @@
 package ru.skillbox.diplom.group35.microservice.dialog.api.dto.message;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import ru.skillbox.diplom.group35.library.core.dto.base.BaseDto;
@@ -16,10 +17,12 @@ import java.util.UUID;
 @Data
 public class MessageDto extends BaseDto {
     private ZonedDateTime time;
-    private UUID authorId;
-    private UUID recipientId;
+    private UUID conversationPartner1;
+    private UUID conversationPartner2;
     private String messageText;
     private String readStatus;
     private UUID dialogId;
+
+    @JsonIgnore
     private Long kafkaTimestamp;
 }

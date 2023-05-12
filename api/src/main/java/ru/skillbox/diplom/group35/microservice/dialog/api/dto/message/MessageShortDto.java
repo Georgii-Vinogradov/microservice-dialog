@@ -15,6 +15,7 @@ import java.util.UUID;
 @Data
 public class MessageShortDto extends BaseDto {
     private ZonedDateTime time;
-    private UUID authorId;
+    private UUID conversationPartner1;
+    private UUID conversationPartner2;
     private String messageText;
 }

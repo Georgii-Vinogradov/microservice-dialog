@@ -6,7 +6,7 @@ import ru.skillbox.diplom.group35.microservice.dialog.api.dto.dialog.DialogDto;
 import ru.skillbox.diplom.group35.microservice.dialog.domain.model.Dialog;
 import ru.skillbox.diplom.group35.microservice.dialog.domain.model.Message;
 
-import java.util.UUID;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public abstract class DialogMapper {
@@ -18,19 +18,22 @@ public abstract class DialogMapper {
         DialogDto dialogDto = new DialogDto();
         dialogDto.setId(dialog.getId());
         dialogDto.setIsDeleted(dialog.getIsDeleted());
-        dialogDto.setConversationPartner(dialog.getConversationPartner());
+        dialogDto.setConversationPartner1(dialog.getConversationPartner1());
+        dialogDto.setConversationPartner2(dialog.getConversationPartner2());
         dialogDto.setUnreadCount(dialog.getUnreadCount());
-        dialogDto.setLastMessage(messageMapper.toMessageDto(lastMessage));
+        if (lastMessage != null) {
+            dialogDto.setLastMessage(List.of(messageMapper.toMessageDto(lastMessage)));
+        }
         return dialogDto;
     }
 
-    public Dialog toDialog(DialogDto dialogDto, UUID authorId) {
+    public Dialog toDialog(DialogDto dialogDto) {
         Dialog dialog = new Dialog();
         dialog.setId(dialogDto.getId());
         dialog.setIsDeleted(dialogDto.getIsDeleted());
-        dialog.setAuthorId(authorId);
         dialog.setUnreadCount(dialogDto.getUnreadCount());
-        dialog.setConversationPartner(dialogDto.getConversationPartner());
+        dialog.setConversationPartner1(dialogDto.getConversationPartner1());
+        dialog.setConversationPartner2(dialogDto.getConversationPartner2());
         return dialog;
     }
 }
