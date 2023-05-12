@@ -40,4 +40,10 @@ public class Message extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "dialog_id", nullable = false)
     private Dialog dialog;
+
+    @Column(name = "kafka_timestamp")
+    private Long kafkaTimestamp;
+
+
+
 }

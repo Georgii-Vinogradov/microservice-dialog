@@ -21,6 +21,9 @@ public interface MessageRepository extends BaseRepository<Message> {
 
     Optional<Message> findTopByDialogIdOrderByTimeDesc(UUID dialogId);
 
+    @Query("select max(m.kafkaTimestamp) from Message m")
+    Long findLastKafkaTimestamp();
+
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Message m SET m.readStatus = :readStatus WHERE m.dialog.id = :dialogId")
     void updateReadStatusByDialogId(@Param("readStatus") String readStatus, @Param("dialogId") UUID dialogId);

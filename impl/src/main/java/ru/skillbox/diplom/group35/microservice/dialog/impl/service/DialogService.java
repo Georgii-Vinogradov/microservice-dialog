@@ -83,7 +83,10 @@ public class DialogService {
         Page<DialogDto> dialogDtoPage = dialogs.map(dialog -> {
             Optional<Message> lastMessage = messageRepository.findTopByDialogIdOrderByTimeDesc(dialog.getId());
             DialogDto dto = dialogMapper.toDto(dialog, lastMessage.isPresent() ? lastMessage.get() : null);
-            MessageSearchDto messageSearchDto = new MessageSearchDto(false, authorId, dialog.getConversationPartner(), "SENT");
+            MessageSearchDto messageSearchDto = new MessageSearchDto()
+                    .setAuthorId(authorId)
+                    .setRecipientId(dialog.getConversationPartner())
+                    .setReadStatus("SENT");
             dto.setUnreadCount(getUnreadCount(messageSearchDto));
             return  dto;
         });
@@ -93,7 +96,9 @@ public class DialogService {
     public UnreadCountDto getUnreadCountDto() {
         UUID recipientId = securityUtil.getAccountDetails().getId();
         log.info("found current user id: {}", recipientId);
-        MessageSearchDto messageSearchDto = new MessageSearchDto(false, null, recipientId, "SENT");
+        MessageSearchDto messageSearchDto = new MessageSearchDto()
+                .setRecipientId(recipientId)
+                .setReadStatus("SENT");
         return new UnreadCountDto(getUnreadCount(messageSearchDto));
     }
 
@@ -104,7 +109,9 @@ public class DialogService {
     public Page<MessageShortDto> getMessages(UUID companionId, Pageable pageable) {
         UUID authorId = securityUtil.getAccountDetails().getId();
         log.info("found current user id: {}", authorId);
-        MessageSearchDto messageSearchDto = new MessageSearchDto(false, authorId, companionId, null);
+        MessageSearchDto messageSearchDto = new MessageSearchDto()
+                .setAuthorId(authorId)
+                .setRecipientId(companionId);
         Page<Message> messages = messageRepository.findAll(getMessageSpec(messageSearchDto), pageable);
         if (messages.get().count() == 0) {
             dialogRepository.save(createDialog(authorId, companionId));
@@ -127,11 +134,16 @@ public class DialogService {
         return dialogRepository.save(dialog);
     }
 
+    public Long getLastTimestamp() {
+        return messageRepository.findLastKafkaTimestamp();
+    }
+
     public static Specification<Message> getMessageSpec(MessageSearchDto messageSearchDto) {
         return getBaseSpecification(messageSearchDto)
                 .and(equal(Message_.authorId, messageSearchDto.getAuthorId(), true))
                 .and(equal(Message_.recipientId, messageSearchDto.getRecipientId(), true))
                 .and(equal(Message_.readStatus, messageSearchDto.getReadStatus(), true))
+                .and(equal(Message_.kafkaTimestamp, messageSearchDto.getKafkaTimestamp(), true))
                 .and(equal(Message_.isDeleted, messageSearchDto.getIsDeleted(), true));
     }
     
@@ -141,5 +153,6 @@ public class DialogService {
                 .and(equal(Dialog_.conversationPartner, dialogSearchDto.getConversationPartner(), true))
                 .and(equal(Dialog_.isDeleted, dialogSearchDto.getIsDeleted(), true));
     }
+
 
 }

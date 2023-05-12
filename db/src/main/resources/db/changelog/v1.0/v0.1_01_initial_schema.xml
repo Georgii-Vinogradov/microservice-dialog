@@ -4,6 +4,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <!-- TABLES -->
     <changeSet id="create-table-dialog" author="Georgiy Vinogradov">
         <createTable tableName="dialog">
             <column name="id" type="uuid">
@@ -48,23 +49,19 @@
             </column>
         </createTable>
     </changeSet>
-
-    <changeSet id="create-foreign-key" author="Georgiy Vinogradov">
-        <addForeignKeyConstraint baseColumnNames="dialog_id" baseTableName="message"
-                                 constraintName="fk_message_dialog" referencedColumnNames="id"
-                                 referencedTableName="dialog"/>
-    </changeSet>
-
-    <!-- TABLES -->
     <!-- END TABLES -->
 
     <!-- INDEXES -->
     <!-- END INDEXES -->
 
     <!-- FOREIGN KEYS -->
+    <changeSet id="create-foreign-key" author="Georgiy Vinogradov">
+        <addForeignKeyConstraint baseColumnNames="dialog_id" baseTableName="message"
+                                 constraintName="fk_message_dialog" referencedColumnNames="id"
+                                 referencedTableName="dialog"/>
+    </changeSet>
     <!-- END FOREIGN KEYS -->
 
     <!-- SEQUENCES -->
     <!-- EDN SEQUENCES -->
-
 </databaseChangeLog>

@@ -16,6 +16,8 @@ import ru.skillbox.diplom.group35.library.core.annotation.JwtProvider;
 @EnableSecurity
 @EnableBaseRepository
 @SpringBootApplication
+//        (exclude = {SecurityAutoConfiguration.class,
+//        ManagementWebSecurityAutoConfiguration.class})
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);

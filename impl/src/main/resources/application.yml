@@ -25,22 +25,22 @@ spring:
         default_schema: ${DB_SCHEMA:dialog}
     open-in-view: false
 
-  kafka:
-    bootstrap-servers: ${KAFKA_HOST:localhost}:9092
-    consumer:
-      group-id: ${KAFKA_GROUP_ID:app.1}
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    producer:
-      retries: 3
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-
-app:
+kafka:
+  bootstrap-servers: kafka-service.skillbox-alpha-kafka:9092
+  consumer:
+    group-id: dialog.1
+    concurrency: 3
+    max.poll.interval.ms: 1000
+    spring.json.trusted.packages: ru.skillbox.diplom.group35.*
+  producer:
+    retries: 3
   topic:
-    account: ${KAFKA_TOPIC:topic-dialog}
+    partition-count: 3
+    replication-factor: 1
+    reply: t.dialog.message.out
+    request: t.dialog.message.in
 
 logging:
   level:
     org.springframework: info
+    org.apache.kafka.clients.producer: ERROR
