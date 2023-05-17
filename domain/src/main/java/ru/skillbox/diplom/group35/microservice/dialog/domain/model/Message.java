@@ -25,11 +25,11 @@ public class Message extends BaseEntity {
     @Column(name = "time", nullable = false)
     private ZonedDateTime time;
 
-    @Column(name = "author_id", nullable = false)
-    private UUID authorId;
+    @Column(name = "conversation_partner_1", nullable = false)
+    private UUID conversationPartner1;
 
-    @Column(name = "recipient_id", nullable = false)
-    private UUID recipientId;
+    @Column(name = "conversation_partner_2", nullable = false)
+    private UUID conversationPartner2;
 
     @Column(name = "message_text", columnDefinition = "TEXT")
     private String messageText;

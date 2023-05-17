@@ -3,8 +3,6 @@ package ru.skillbox.diplom.group35.microservice.dialog.impl.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.TopicPartition;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.listener.AbstractConsumerSeekAware;
 import org.springframework.kafka.support.Acknowledgment;
@@ -14,14 +12,9 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.kafka.StreamingMessageDto;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageDto;
-import ru.skillbox.diplom.group35.microservice.dialog.impl.config.KafkaConstConfig;
 
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 
 /**
  * KafkaConsumerService

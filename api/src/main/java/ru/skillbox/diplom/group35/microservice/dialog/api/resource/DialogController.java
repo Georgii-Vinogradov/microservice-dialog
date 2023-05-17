@@ -32,9 +32,12 @@ public interface DialogController {
     @GetMapping
     ResponseEntity<Page<DialogDto>> getDialogs(Pageable pageable);
 
+    @GetMapping("/recipientId/{id}")
+    ResponseEntity<DialogDto> getDialogByRecipientId(@PathVariable(name = "id") UUID recipientId);
+
     @GetMapping("/unread")
     ResponseEntity<UnreadCountDto> getUnread();
 
     @GetMapping("/messages")
-    ResponseEntity<Page<MessageShortDto>> getMessages(@RequestParam UUID companionId, Pageable pageable);
+    ResponseEntity<Page<MessageShortDto>> getMessages(@RequestParam UUID recipientId, Pageable pageable);
 }

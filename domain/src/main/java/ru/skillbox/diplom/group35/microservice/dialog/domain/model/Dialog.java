@@ -6,6 +6,7 @@ import lombok.Setter;
 import ru.skillbox.diplom.group35.library.core.model.base.BaseEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,11 +26,11 @@ public class Dialog extends BaseEntity {
     @Column(name = "unread_count")
     private Integer unreadCount;
 
-    @Column(name = "author_id", nullable = false)
-    private UUID authorId;
+    @Column(name = "conversation_partner_1", nullable = false)
+    private UUID conversationPartner1;
 
-    @Column(name = "conversation_partner", nullable = false)
-    private UUID conversationPartner;
+    @Column(name = "conversation_partner_2", nullable = false)
+    private UUID conversationPartner2;
 
     @OrderBy("time DESC")
     @Column(name = "last_message")

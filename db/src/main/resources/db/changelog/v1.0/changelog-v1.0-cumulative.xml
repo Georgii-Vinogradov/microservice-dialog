@@ -7,5 +7,6 @@
 
     <include file="v0.1_01_initial_schema.xml" relativeToChangelogFile="true"/>
     <include file="v0.1_02_extend_table_message.xml" relativeToChangelogFile="true" />
+    <include file="v0.1_03_modify_fields.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>

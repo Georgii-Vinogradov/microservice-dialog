@@ -1,14 +1,10 @@
 package ru.skillbox.diplom.group35.microservice.dialog.impl.mapper;
 
 import org.mapstruct.*;
-import ru.skillbox.diplom.group35.microservice.dialog.api.dto.kafka.StreamingMessageDto;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageDto;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageShortDto;
-import ru.skillbox.diplom.group35.microservice.dialog.domain.model.Dialog;
 import ru.skillbox.diplom.group35.microservice.dialog.domain.model.Message;
 
-import javax.sound.midi.ShortMessage;
-import java.util.UUID;
 
 /**
  * MessageMapper

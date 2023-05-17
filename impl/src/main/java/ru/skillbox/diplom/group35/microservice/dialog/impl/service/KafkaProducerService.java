@@ -2,7 +2,6 @@ package ru.skillbox.diplom.group35.microservice.dialog.impl.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.kafka.StreamingMessageDto;
