@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skillbox.diplom.group35.library.core.annotation.EnableExceptionHandler;
+import ru.skillbox.diplom.group35.library.core.annotation.EnableSwagger;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.dialog.DialogDto;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageDto;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageShortDto;
@@ -23,6 +24,7 @@ import java.util.UUID;
  */
 
 @Slf4j
+@EnableSwagger
 @RestController
 @EnableExceptionHandler
 @RequiredArgsConstructor
@@ -36,6 +38,7 @@ public class DialogControllerImpl implements DialogController {
                 dialogDto.getConversationPartner1(), dialogDto.getConversationPartner2());
         return ResponseEntity.ok(dialogService.createDialog(dialogDto));
     }
+
     @Override
     public ResponseEntity<MessageDto> createMessage(MessageDto messageDto) {
         log.info("create message with conversationPartner1: {}, conversationPartner2: {}",
