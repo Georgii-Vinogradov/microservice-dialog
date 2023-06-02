@@ -13,8 +13,8 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import ru.skillbox.diplom.group35.microservice.dialog.api.dto.kafka.StreamingMessageDto;
-import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageDto;
+import ru.skillbox.diplom.group35.library.core.dto.streaming.MessageDto;
+import ru.skillbox.diplom.group35.library.core.dto.streaming.StreamingMessageDto;
 
 import java.util.HashMap;
 import java.util.Map;
