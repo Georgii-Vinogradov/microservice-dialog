@@ -40,6 +40,15 @@ kafka:
     reply: t.dialog.message.out
     request: t.dialog.message.in
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: '/api/v1/dialogs/v3/api-docs'
+  swagger-ui:
+    path: '/api/v1/dialogs/swagger-ui'
+    doc-expansion: none
+    disable-swagger-default-url: true
+
 logging:
   level:
     org.springframework: info

@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import ru.skillbox.diplom.group35.library.core.dto.base.BaseDto;
-import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageDto;
+import ru.skillbox.diplom.group35.library.core.dto.streaming.MessageDto;
 
 import java.util.List;
 import java.util.UUID;

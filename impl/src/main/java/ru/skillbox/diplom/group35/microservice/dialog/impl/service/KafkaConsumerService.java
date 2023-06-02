@@ -10,8 +10,8 @@ import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
-import ru.skillbox.diplom.group35.microservice.dialog.api.dto.kafka.StreamingMessageDto;
-import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageDto;
+import ru.skillbox.diplom.group35.library.core.dto.streaming.MessageDto;
+import ru.skillbox.diplom.group35.library.core.dto.streaming.StreamingMessageDto;
 
 import java.util.ArrayList;
 import java.util.Map;

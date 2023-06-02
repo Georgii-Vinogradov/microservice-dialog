@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.skillbox.diplom.group35.library.core.dto.streaming.MessageDto;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.dialog.DialogDto;
-import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageDto;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageShortDto;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.UnreadCountDto;
 

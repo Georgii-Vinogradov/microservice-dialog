@@ -1,7 +1,7 @@
 package ru.skillbox.diplom.group35.microservice.dialog.impl.mapper;
 
 import org.mapstruct.*;
-import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageDto;
+import ru.skillbox.diplom.group35.library.core.dto.streaming.MessageDto;
 import ru.skillbox.diplom.group35.microservice.dialog.api.dto.message.MessageShortDto;
 import ru.skillbox.diplom.group35.microservice.dialog.domain.model.Message;
 
