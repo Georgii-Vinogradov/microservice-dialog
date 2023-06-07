@@ -51,18 +51,22 @@ public class DialogService {
     }
 
     private Dialog createDialogIfAbsent(DialogDto dialogDto) {
+        log.info("call find or create new dialog");
         Dialog dialog = null;
         DialogSearchDto searchDto = new DialogSearchDto(dialogDto.getConversationPartner1(), dialogDto.getConversationPartner2());
         Optional<Dialog> dialogFound = dialogRepository.findOne(getDialogSpecIn(searchDto));
         if (dialogFound.isPresent()) {
             dialog =  dialogFound.get();
+            log.debug("found exist dialog: {}", dialog);
         } else {
             dialog = dialogRepository.save(dialogMapper.toDialog(dialogDto));
+            log.debug("create new dialog: {}", dialog);
         }
         return dialog;
     }
 
     public DialogDto createDialog(DialogDto dialogDto) {
+        log.debug("DialogDto: {}", dialogDto);
         Dialog dialog = createDialogIfAbsent(dialogDto);
         Optional<Message> lastMessage = messageRepository.findTopByDialogIdOrderByTimeDesc(dialog.getId());
         log.info("return dialogId {}", dialog.getId());
@@ -76,7 +80,9 @@ public class DialogService {
         Dialog dialog = createDialogIfAbsent(dialogDto);
         log.info("return dialogId {}", dialog.getId());
         Optional<Message> lastMessage = messageRepository.findTopByDialogIdOrderByTimeDesc(dialog.getId());
-        return dialogMapper.toDto(dialog, lastMessage.isPresent() ? lastMessage.get() :null);
+        DialogDto result = dialogMapper.toDto(dialog, lastMessage.isPresent() ? lastMessage.get() :null);
+        log.debug("return DialogDto: {}", result);
+        return result;
     }
 
     public MessageDto createMessage(MessageDto messageDto) {
@@ -106,7 +112,7 @@ public class DialogService {
         DialogSearchDto reverseDialogSearchDto = new DialogSearchDto().setConversationPartner2(currentUserId);
         Page<Dialog> dialogs = dialogRepository.findAll(getDialogSpec(dialogSearchDto)
                 .or(getDialogSpec(reverseDialogSearchDto)), pageable);
-
+        log.debug("found {} dialogs", dialogs.getNumberOfElements());
         Page<DialogDto> dialogDtoPage = dialogs.map(dialog -> {
             Optional<Message> lastMessage = messageRepository.findTopByDialogIdOrderByTimeDesc(dialog.getId());
             DialogDto dto = dialogMapper.toDto(dialog, lastMessage.isPresent() ? lastMessage.get() : null);

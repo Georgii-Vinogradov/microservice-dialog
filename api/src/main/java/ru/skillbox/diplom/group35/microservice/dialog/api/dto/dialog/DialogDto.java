@@ -33,4 +33,14 @@ public class DialogDto extends BaseDto {
 
     @Schema(description = "Dto последнего сообщения")
     private List<MessageDto> lastMessage;
+
+    @Override
+    public String toString() {
+        return "DialogDto{" +
+                "unreadCount=" + unreadCount +
+                ", conversationPartner1=" + conversationPartner1 +
+                ", conversationPartner2=" + conversationPartner2 +
+                ", lastMessage=" + lastMessage +
+                '}';
+    }
 }
