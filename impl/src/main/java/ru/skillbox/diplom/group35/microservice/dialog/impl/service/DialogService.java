@@ -86,14 +86,10 @@ public class DialogService {
     }
 
     public MessageDto createMessage(MessageDto messageDto) {
+        log.info("call create message");
         messageDto.setIsDeleted(false);
-        Dialog dialog = null;
-        if (messageDto.getDialogId() != null) {
-            dialog = dialogRepository.getById(messageDto.getDialogId());
-        } else {
-            DialogDto dialogDto = createDialogDto(messageDto.getConversationPartner1(), messageDto.getConversationPartner2());
-            dialog = createDialogIfAbsent(dialogDto);
-        }
+        DialogDto dialogDto = createDialogDto(messageDto.getConversationPartner1(), messageDto.getConversationPartner2());
+        Dialog dialog = createDialogIfAbsent(dialogDto);
         Message message = messageMapper.toMessage(messageDto);
         message.setDialog(dialog);
         message = messageRepository.save(message);
