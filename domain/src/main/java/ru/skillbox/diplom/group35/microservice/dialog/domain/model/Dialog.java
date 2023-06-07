@@ -36,4 +36,14 @@ public class Dialog extends BaseEntity {
     @Column(name = "last_message")
     @OneToMany(mappedBy = "dialog", fetch = FetchType.LAZY)
     private List<Message> lastMessage;
+
+    @Override
+    public String toString() {
+        return "Dialog{" +
+                "unreadCount=" + unreadCount +
+                ", conversationPartner1=" + conversationPartner1 +
+                ", conversationPartner2=" + conversationPartner2 +
+                ", lastMessage=" + lastMessage +
+                '}';
+    }
 }
