@@ -6,7 +6,6 @@ import lombok.Setter;
 import ru.skillbox.diplom.group35.library.core.model.base.BaseEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 
