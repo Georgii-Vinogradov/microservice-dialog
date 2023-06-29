@@ -1,16 +1,56 @@
+server:
+  port: 8085
+
 spring:
-  boot:
-    admin:
-      client:
-        enabled: false
-  cloud:
-    kubernetes:
-      config:
-        enabled: false
-      reload:
-        monitoring-config-maps: false
   liquibase:
+    enabled: false
+    drop-first: false
+    change-log: classpath:database-dialog-changelog.xml
+    default_schema: dialog
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/skillbox
+    username: dialog
+    password: dialog
+    driverClassName: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        format_sql: true
+        user_sql_comments: true
+        default_schema: dialog
+    open-in-view: false
+
+kafka:
+  bootstrap-servers: localhost:9092
+  consumer:
+    group-id: dialog.1
+    concurrency: 3
+    max.poll.interval.ms: 300000  # 5min for debug
+    spring.json.trusted.packages: ru.skillbox.diplom.group35.*
+  producer:
+    retries: 3
+  topic:
+    partition-count: 3
+    replication-factor: 1
+    reply: t.dialog.message.out
+    request: t.dialog.message.in
+
+springdoc:
+  api-docs:
     enabled: true
-    drop-first: true
-    default-schema: dialog
-    liquibase-schema: dialog
+    path: '/api/v1/dialogs/v3/api-docs'
+  swagger-ui:
+    path: '/api/v1/dialogs/swagger-ui'
+    doc-expansion: none
+    disable-swagger-default-url: true
+
+logging:
+  level:
+    org.springframework: info
+    org.apache.kafka.clients.producer: ERROR

@@ -9,7 +9,7 @@ spring:
     default_schema: dialog
 
   datasource:
-    url: jdbc:postgresql://82.202.214.42:5433/skillbox
+    url: jdbc:postgresql://localhost:5432/skillbox
     username: dialog
     password: dialog
     driverClassName: org.postgresql.Driver
@@ -27,7 +27,7 @@ spring:
     open-in-view: false
 
 kafka:
-  bootstrap-servers: 82.202.214.42:9094
+  bootstrap-servers: localhost:9092
   consumer:
     group-id: dialog.1
     concurrency: 3
