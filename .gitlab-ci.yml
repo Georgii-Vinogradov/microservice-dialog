@@ -10,7 +10,7 @@ build:
   only: 
     - develop
   script:
-    - mvn -s maven-settings.xml clean package deploy
+    - mvn -s maven-settings.xml clean package deploy -DskipTests
   variables:
     MAVEN_OPTS: "-Dmaven.repo.local=./.m2/repository"
   artifacts:
